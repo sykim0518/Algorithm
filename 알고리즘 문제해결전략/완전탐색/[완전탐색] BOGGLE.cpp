@@ -3,77 +3,79 @@
 #include <string>
 using namespace std;
 
-int T;
+int C;
 char map[6][6];
-int voca_num;
+int N;
 vector<string> voca;
 
-const int dx[8] = { -1,0,1,0,-1,-1,1,1 };
-const int dy[8] = { 0,1,0,-1,-1,1,1,-1 };
+int dx[8] = {-1,-1,-1,0,1,1,1,0};
+int dy[8] = {-1,0,1,1,1,0,-1,-1};
 
-
-bool sol(string target, pair<int, int> current)
+bool isRange(int x, int y)
 {
-	// 기저사례1: 현재 위치가 범위밖이면, 실패
-	if (current.first < 1 || current.first>5 || current.second < 1 || current.second>5) return false;
-	// 기저사례2: 첫 글자가 일치하지 않으면, 실패
-	if (map[current.first][current.second] != target[0]) return false;
-	// 기저사례3: 단어 길이가 1이면 성공
-	if (target.size() == 1) return true;
+	if (x < 0 || x >= 5 || y < 0 || y >= 5) return false;
+	return true;
+}
+
+bool hasword(string voca,int x,int y)
+{
+	//기저사례1: 범위 밖이면, return true
+	if (!isRange(x, y)) return false;
+
+	//기저사례2: 첫글자가 다르면, return true
+	if (voca[0] != map[x][y]) return false;
+	
+	//기저사례3: 총 글자수가 1이면, return false
+	if (voca.size() == 1) return true;
 
 	for (int i = 0; i < 8; i++)
 	{
-		pair<int, int> next = { current.first + dx[i],current.second + dy[i] };
-		if (sol(target.substr(1), next)) return true;
+		int nx = x + dx[i];
+		int ny = y + dy[i];
+		if (hasword(voca.substr(1), nx, ny)) return true;
 	}
 	return false;
 }
 
-
 int main()
 {
-	cin >> T;
-
-	for (int t = 1; t <= T; t++)
+	cin >> C;
+	for (int t=1;t<=C;t++)
 	{
-		for (int i = 1; i <= 5; i++)
-			memset(map, 0, sizeof(char) * 6);
+		memset(map, 0, sizeof(map));
 		voca.clear();
 
-		for (int i = 1; i <= 5; i++)
+		for (int i=0;i<5;i++)
 		{
-			for (int j = 1; j <= 5; j++)
+			for (int j=0;j<5;j++)
 			{
 				cin >> map[i][j];
 			}
 		}
-
-		cin >> voca_num;
-		for (int i = 0; i < voca_num; i++)
+		cin >> N;
+		for (int i=0;i<N;i++)
 		{
 			string s;
 			cin >> s;
 			voca.push_back(s);
 		}
 
-		for (int i = 0; i < voca_num; i++)
+		bool flag = false;
+		for (int i=0;i<N;i++)
 		{
-			bool flag = false;
-			for (int x = 1; x <= 5; x++)
+			for (int x=0;x<5;x++)
 			{
-				if (flag) break;
-				for (int y = 1; y <= 5; y++)
+				for (int y=0;y<5;y++)
 				{
-					flag = sol(voca[i], { x,y });
-
-					if (flag)
-					{
-						cout << voca[i] << " " << "YES" << endl;
-						break;
-					}
-					if (x == 5 && y == 5 && !flag)  cout << voca[i] << " " << "NO" << endl;
+					flag=hasword(voca[i],x,y);
+					if (flag) break;
 				}
+				if (flag) break;
 			}
+			if (flag)
+				cout << voca[i] << " " << "YES"<<endl;
+			else
+				cout << voca[i] << " " << "NO"<<endl;
 		}
 	}
 	return 0;
