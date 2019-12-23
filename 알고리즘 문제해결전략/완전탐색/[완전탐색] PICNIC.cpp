@@ -1,38 +1,36 @@
 #include <iostream>
-#include <vector>
-#include <cstring>
+#include <string.h>
 using namespace std;
 
 int T;
 int N, M;
-bool isFriend[10][10] = { false };
-bool isPair[10] = { false };
+bool isPair[11][11] = {false};
+bool isMatch[11] = { false };
 
-int sol(bool isPair[10])
+int coutPair(bool isMatch[11])
 {
-	// 남은 학생들 중 가장 번호가 빠른 학생을 찾는다
-	int notPair = -1;
+	// 남은 학생 중 가장 번호가 빠른 학생 찾기
+	int notMatch = -1;
 	for (int i = 0; i < N; i++)
 	{
-		if (!isPair[i])
+		if (!isMatch[i])
 		{
-			notPair = i;
+			notMatch = i;
 			break;
 		}
 	}
 
-	// 기저사례: 모든 학생이 짝을 찾았으면, 종료
-	if (notPair == -1) return 1;
+	// 기저사례: 모든 학생이 짝이 있는 경우
+	if (notMatch == -1) return 1;
 
 	int ans = 0;
-	// 짝지을 학생 정하기
-	for (int p = notPair + 1; p < N; p++)
+	for (int i=notMatch+1;i<N;i++)
 	{
-		if (!isPair[p] && isFriend[notPair][p])
+		if (!isMatch[i] && isPair[notMatch][i])
 		{
-			isPair[notPair] = isPair[p] = true;
-			ans += sol(isPair);
-			isPair[notPair] = isPair[p] = false;
+			isMatch[notMatch] = isMatch[i] = true;
+			ans += coutPair(isMatch);
+			isMatch[notMatch] = isMatch[i] = false;
 		}
 	}
 	return ans;
@@ -41,20 +39,22 @@ int sol(bool isPair[10])
 int main()
 {
 	cin >> T;
-	for (int t = 1; t <= T; t++)
+	for (int t=1;t<=T;t++)
 	{
-		cin >> N >> M;
-		memset(isFriend, false, sizeof(isFriend));
+		memset(isMatch, false, sizeof(isMatch));
 		memset(isPair, false, sizeof(isPair));
 
-		for (int m = 0; m < M; m++)
+
+		cin >> N >> M;
+		for (int m=0;m<M;m++)
 		{
 			int x, y;
 			cin >> x >> y;
-			isFriend[x][y] = isFriend[y][x] = true;
+			isPair[x][y] = isPair[y][x] = true;
 		}
+	
+		cout<<coutPair(isMatch)<<endl;
 
-		cout << sol(isPair) << endl;
 	}
 	return 0;
 }
