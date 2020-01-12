@@ -8,5 +8,3 @@
 
 
 #### 📌  삼성 SW 역량테스트 https://swexpertacademy.com/main/main.do
-
-
